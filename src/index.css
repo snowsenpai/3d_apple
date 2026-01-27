@@ -14,12 +14,6 @@
   --color-zinc: #101010;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   color: white;
   width: 100dvw;
@@ -52,12 +46,15 @@ canvas {
 }
 
 @utility btn {
-  padding-inline: 1.25rem;
-  padding-block: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.25rem;
   border-radius: 1.5rem;
   background-color: var(--color-blue);
   margin-block: 1.25rem;
   border: 1px solid transparent;
+  white-space: nowrap;
   &:hover {
     background-color: transparent;
     border-color: var(--color-blue);
