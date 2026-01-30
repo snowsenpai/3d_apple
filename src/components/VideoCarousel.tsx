@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from 'react'
 import { highlightsSlides } from '../constants'
 import { pauseImg, playImg, replayImg } from '../utils'
 
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+gsap.registerPlugin(ScrollTrigger)
+
 const VideoCarousel = () => {
   // Refs for accessing video elements and progress indicator spans
   const videoRef = useRef<(HTMLVideoElement | null)[]>([])

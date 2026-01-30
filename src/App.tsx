@@ -2,6 +2,9 @@ import './App.css'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Highlights from './components/Highlights'
+import PhoneModel from './components/PhoneModel'
+import ErrorBoundary from './components/ErrorBoundary'
+
 
 function App() {
   return (
@@ -9,6 +12,9 @@ function App() {
       <Navbar />
       <Hero />
       <Highlights />
+      <ErrorBoundary>
+        <PhoneModel />
+      </ErrorBoundary>
     </main>
   )
 }

@@ -46,7 +46,7 @@ export const highlightsSlides = [
   },
 ];
 
-export const models = [
+export const phoneModels = [
   {
     id: 1,
     title: "iPhone 15 Pro in Natural Titanium",
@@ -73,7 +73,7 @@ export const models = [
   },
 ];
 
-export const sizes = [
+export const phoneSizes = [
   { label: '6.1"', value: "small" },
   { label: '6.7"', value: "large" },
 ];
