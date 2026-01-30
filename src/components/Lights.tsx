@@ -1,3 +1,11 @@
+/**
+ * Lights - Per-view spotlight group for the 3D iPhone model.
+ *
+ * These spotlights provide directional illumination and shadow casting for
+ * each PhoneModelView. Environment-based image lighting (Lightformers) is
+ * defined separately at the Canvas level in PhoneModel.tsx so that a single
+ * environment map is shared across all views.
+ */
 const Lights = () => {
   return (
     <group name="lights">

@@ -10,14 +10,39 @@ import { useEffect } from 'react';
 import type { Material, Mesh } from 'three';
 import * as THREE from 'three';
 
+/**
+ * IPhone - Renders the Apple iPhone 15 Pro Max GLTF model with dynamic
+ * textures and material colors.
+ *
+ * The GLTF model is loaded via drei's useGLTF hook and cast to a typed record
+ * of Mesh nodes and Materials (the auto-generated node/material names are
+ * opaque hashes from the original Sketchfab export).
+ *
+ * Key behaviors:
+ * - A screen texture (passed via props.item.img) is loaded with useTexture
+ *   and applied to the screen mesh as a meshStandardMaterial map.
+ * - flipY is set to false because GLTF uses a top-left UV origin, while
+ *   Three.js textures default to bottom-left. Without this the texture
+ *   appears upside-down.
+ * - colorSpace is set to SRGBColorSpace so the texture is decoded from sRGB
+ *   into linear space for physically correct lighting. Without this the
+ *   texture appears too dark under scene lighting.
+ * - Material colors are dynamically updated whenever the selected phone model
+ *   changes, excluding certain materials (screen glass, camera lens, etc.)
+ *   that should keep their original appearance.
+ */
 function IPhone(props: any) {
+  // useGLTF returns a generic GLTF type — cast to a typed record so we can
+  // access .geometry and .material on each node without TypeScript errors.
   const { nodes, materials } = useGLTF('/models/scene.glb') as unknown as { nodes: Record<string, Mesh>; materials: Record<string, Material> }
 
   const texture = useTexture(props.item.img) as THREE.Texture
 
+  // Update material colors whenever the active phone model changes.
   useEffect(() => {
     Object.entries(materials).map((material) => {
-      // these are the material names that colors can't be changed
+      // These material names correspond to parts of the model whose color
+      // should NOT change (e.g. screen glass, camera lens, metallic accents).
       if (
         material[0] !== "zFdeDaGNRwzccye" &&
         material[0] !== "ujsvqBWRMnqdwPx" &&
@@ -147,6 +172,8 @@ function IPhone(props: any) {
         material={materials.pIJKfZsazmcpEiU}
         scale={0.01}
       >
+        {/* Override the default material on the screen mesh with a textured
+            material. roughness={1} gives a matte, non-reflective screen look. */}
         <meshStandardMaterial roughness={1} map={texture}/>
       </mesh>
       <mesh
@@ -260,4 +287,6 @@ function IPhone(props: any) {
 
 export default IPhone
 
+// Preload the GLTF model so it is cached before the component mounts,
+// reducing the visible loading delay when the model first renders.
 useGLTF.preload('/models/scene.glb')

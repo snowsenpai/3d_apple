@@ -9,6 +9,23 @@ import PhoneModelView from './PhoneModelView'
 import { phoneModels, phoneSizes } from '../constants'
 import { animateWithGsapTimeline } from '../utils/animations'
 
+/**
+ * PhoneModel - Main section component for the 3D iPhone model showcase.
+ *
+ * Renders two side-by-side phone model views (small and large) within a shared
+ * R3F Canvas. Users can switch between model sizes and color variants using the
+ * UI controls below the 3D viewport.
+ *
+ * Architecture:
+ * - PhoneModel (this component) owns the Canvas and shared Environment lighting.
+ * - PhoneModelView renders each individual model inside a drei `View`, enabling
+ *   multiple viewports within a single Canvas.
+ * - IPhone renders the actual GLTF model with dynamic textures and materials.
+ * - Lights provides per-view spotlight lighting.
+ *
+ * GSAP is used for size-switch animations (sliding views in/out) and scroll-
+ * triggered heading reveals.
+ */
 const PhoneModel = () => {
   const [modelSize, setModelSize] = useState('small')
   const [phoneModelInfo, setPhoneModelInfo] = useState({
@@ -83,6 +100,11 @@ const PhoneModel = () => {
               size={modelSize}
             />
 
+            {/*
+              R3F Canvas — a single Canvas is shared by both PhoneModelView
+              components via drei's View / View.Port pattern. This avoids
+              creating multiple WebGL contexts (browsers typically limit these).
+            */}
             <Canvas
               className='w-full h-full'
               style={{
@@ -93,9 +115,21 @@ const PhoneModel = () => {
                 right: 0,
                 overflow: 'hidden',
               }}
-              // useful for interacting with model
+              // eventSource allows pointer events from outside the Canvas (e.g. the root div)
+              // to be forwarded into the 3D scene, enabling OrbitControls interaction.
               eventSource={document.getElementById('root') ?? undefined}
             >
+              {/*
+                Environment is placed at the Canvas level so that ONE environment
+                map is shared across all Views. Previously each PhoneModelView had
+                its own <Environment>, which generated a separate HDR cube map per
+                view — doubling GPU memory usage and causing WebGL Context Lost
+                errors. Keeping it here ensures a single environment map is created
+                and reused by every view rendered through View.Port.
+
+                resolution={256} keeps the environment cube map small (256x256 per
+                face) to reduce GPU memory pressure.
+              */}
               <Environment resolution={256}>
                 <group>
                   <Lightformer
